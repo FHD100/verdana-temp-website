@@ -12,12 +12,20 @@
 </head>
 <body>
   <main class="page">
+    <div class="leaf-field" aria-hidden="true">
+      <span style="--x: 8%; --y: 14%; --s: 0.78; --r: -24deg;"></span>
+      <span style="--x: 88%; --y: 18%; --s: 1.08; --r: 32deg;"></span>
+      <span style="--x: 17%; --y: 78%; --s: 1.18; --r: 18deg;"></span>
+      <span style="--x: 78%; --y: 76%; --s: 0.84; --r: -38deg;"></span>
+      <span style="--x: 50%; --y: 8%; --s: 0.62; --r: 54deg;"></span>
+    </div>
+
     <section class="card" aria-label="Coming soon message">
       <img class="logo" src="assets/verdana-logo.png" alt="Verdana Nature logo" />
 
-      <p class="eyebrow">Landscape · Urban Design · Construction · Maintenance</p>
+      <p class="eyebrow">Landscape · Urban Design · Construction · Maintain</p>
 
-      <h1>We’ll be back soon</h1>
+      <h1>We'll be back soon</h1>
       <h2 lang="ar" dir="rtl">سنعود قريباً</h2>
 
       <p class="message">
@@ -29,9 +37,55 @@
 
       <p class="contact">
         For inquiries, please contact us at
-        <a href="mailto:info@yourdomain.com">info@verdananature.com</a>
+        <a href="mailto:info@verdananature.com">info@verdananature.com</a>
       </p>
     </section>
   </main>
+
+  <script>
+    const root = document.documentElement;
+    const leaves = [...document.querySelectorAll('.leaf-field span')];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let pointerX = window.innerWidth / 2;
+    let pointerY = window.innerHeight / 2;
+
+    function setPointer(x, y) {
+      pointerX = x;
+      pointerY = y;
+
+      const xRatio = x / window.innerWidth - 0.5;
+      const yRatio = y / window.innerHeight - 0.5;
+      root.style.setProperty('--tilt-x', `${(-yRatio * 7).toFixed(2)}deg`);
+      root.style.setProperty('--tilt-y', `${(xRatio * 8).toFixed(2)}deg`);
+
+      leaves.forEach((leaf, index) => {
+        const depth = (index + 1) * 5;
+        leaf.style.transform = `translate(${xRatio * depth}px, ${yRatio * depth}px) rotate(var(--r)) scale(var(--s))`;
+      });
+    }
+
+    function addRipple(x, y) {
+      const ripple = document.createElement('span');
+      ripple.className = 'tap-ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      document.body.appendChild(ripple);
+      ripple.addEventListener('animationend', () => ripple.remove(), { once: true });
+    }
+
+    if (!reduceMotion) {
+      setPointer(pointerX, pointerY);
+
+      window.addEventListener('pointermove', (event) => {
+        setPointer(event.clientX, event.clientY);
+      }, { passive: true });
+
+      window.addEventListener('pointerdown', (event) => {
+        setPointer(event.clientX, event.clientY);
+        addRipple(event.clientX, event.clientY);
+      }, { passive: true });
+    }
+  </script>
 </body>
 </html>
