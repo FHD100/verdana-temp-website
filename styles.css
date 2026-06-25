@@ -202,6 +202,7 @@ h2 {
 .contact {
   color: var(--muted);
   font-size: 0.98rem;
+  line-height: 1.8;
   transform: translateZ(34px);
 }
 
